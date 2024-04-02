@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  php:
+    build: './build/php'
+    volumes:
+      - './app:/var/www/html'
+    depends_on:
+      - mysql
+  nginx:
+    image: nginx:latest
+    ports:
+      - 8092:80
+    links:
+      - 'php'
+    volumes:
+      - './app:/var/www/html'
+      - './nginx.conf:/etc/nginx/conf.d/default.conf'
+    depends_on:
+      - php
+  mysql:
+    ports:
+      - "3306:3306"
+    build: './build/mysql'
+    environment:
+      MYSQL_ROOT_PASSWORD: "myrootpassword"
+      MYSQL_DATABASE: "mysqldb"
+      MYSQL_USER: jose
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - dbData:/var/lib/mysql
+volumes:
+  app:
+  dbData:
